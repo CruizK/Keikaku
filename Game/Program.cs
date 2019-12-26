@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Game
+namespace Keikaku
 {
 #if WINDOWS || LINUX
     /// <summary>
