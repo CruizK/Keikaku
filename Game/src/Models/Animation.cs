@@ -10,21 +10,26 @@ namespace Keikaku.Models
 {
     public class Animation
     {
-        private TextureAtlas textureAtlas;
-        
-        private int currFrame = 0;
-        private int startFrame = 0;
-        private int endFrame = 0;
-        private float durationPerFrame = 0.0f;
-        private float currTime = 0.0f;
-        public Animation(TextureAtlas atlas, int startFrame, int endFrame, float duration) 
+        public int StartFrame = 0;
+        public int EndFrame = 0;
+        public float Duration = 0;
+        public float DurationPerFrame = 0;
+        public int CurrentFrame = 0;
+        public bool ShouldLoop = true;
+
+        public Animation(int startFrame, int frameLength, float duration, bool shouldLoop=true)
         {
-            this.textureAtlas = atlas;
-            this.startFrame = startFrame;         
-            this.endFrame = endFrame;
-            currFrame = startFrame;
-            durationPerFrame = duration / (endFrame - startFrame);
+            
+            StartFrame = startFrame;
+            CurrentFrame = StartFrame;
+            EndFrame = startFrame + frameLength-1;
+            Duration = duration;
+            ShouldLoop = shouldLoop;
+
+            DurationPerFrame = Duration / (frameLength);
         }
+
+        /*
 
         public Rectangle playAnimation(GameTime gameTime)
         {
@@ -38,5 +43,6 @@ namespace Keikaku.Models
 
             return textureAtlas.GetSprite(currFrame);
         }
+        */
     }
 }

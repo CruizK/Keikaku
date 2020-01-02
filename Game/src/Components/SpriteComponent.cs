@@ -13,7 +13,6 @@ namespace Keikaku.Components
     {
         // Should load in default texture
         public Texture2D Texture = null;
-        public Rectangle uvRectangle = Rectangle.Empty;
         public string TexturePath = "";
         public Color Color = Color.White;
         public bool IsVisible = true;
