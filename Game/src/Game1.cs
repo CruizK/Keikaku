@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Keikaku.Tiled;
 
 namespace Keikaku
 {
@@ -12,23 +13,13 @@ namespace Keikaku
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        Texture2D grassTexture;
-
-        KeyboardState prevState;
-        KeyboardState currState;
-
-        Player player;
 
         Camera cam;
-        Vector2 moveCamera;
         int cameraSpeed = 5;
-        float cameraZoom = 0.0f;
+        float cameraZoom = 0.5f;
 
-        Rectangle floorBounds;
-
-
-        Texture2D pixel;
-
+        static Texture2D pixel;
+        Player player;
 
         Scene scene;
         public Game1()
@@ -36,6 +27,9 @@ namespace Keikaku
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             scene = new Scene();
+            player = new Player();
+            this.IsMouseVisible = true;
+            Console.WriteLine(typeof(Tilemap).AssemblyQualifiedName);
         }
 
         /// <summary>
@@ -54,9 +48,9 @@ namespace Keikaku
             int height = graphics.GraphicsDevice.Viewport.Height;
 
             cam = new Camera(width, height);
-            moveCamera = new Vector2(0, 0);
             pixel = new Texture2D(GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
             pixel.SetData(new[] { Color.White });
+
 
 
         }
@@ -65,23 +59,23 @@ namespace Keikaku
         /// LoadContent will be called once per game and is the place to load
         /// all of your content.
         /// </summary>
+        ///
+        Tilemap map;
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            map = Content.Load<Tilemap>("testMap");
+            //for(int i = 0; i < map.)
+
             scene.LoadContent(Content);
 
             // TODO: use this.Content to load your game content here
-            
-            grassTexture = Content.Load<Texture2D>("grass");
 
-            player = new Player();
-            player.LoadContent(Content);
-            
-            floorBounds = new Rectangle(0, 100, grassTexture.Width * 20, grassTexture.Height);
+            //grassTexture = Content.Load<Texture2D>("grass");
 
-            
+            player.LoadContent(Content, GraphicsDevice);
         }
 
         /// <summary>
@@ -103,13 +97,21 @@ namespace Keikaku
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-            
 
-            cam.zoomCamera(cameraZoom);
 
+            Logger.Update(gameTime);
+
+            //cam.zoomCamera(cameraZoom);
+            InputManager.UpdateInput();
             cam.Update(gameTime);
+            cam.setCameraPosition(new Vector2((int)player.GetOrigin().X, (int)player.GetOrigin().Y));
 
-            scene.Update(gameTime);
+            if (InputManager.IsKeyDown(Keys.E))
+                cam.zoomCamera(0.1f);
+            else if (InputManager.IsKeyDown(Keys.Q))
+                cam.zoomCamera(-0.1f);
+
+            player.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -123,13 +125,15 @@ namespace Keikaku
             GraphicsDevice.Clear(Color.Black);
             
             spriteBatch.Begin(SpriteSortMode.Texture, null, SamplerState.PointClamp, null, null, null, cam.transformMatrix);
-            scene.Draw(spriteBatch);
+            map.DrawLayers(spriteBatch);
+            //scene.Draw(spriteBatch);
+            player.Draw(spriteBatch);
             spriteBatch.End();
 
             base.Draw(gameTime);
         }
 
-        private void DrawBorder(Rectangle rectangleToDraw, int thicknessOfBorder, Color borderColor)
+        public static void DrawBorder(SpriteBatch spriteBatch, Rectangle rectangleToDraw, int thicknessOfBorder, Color borderColor)
         {
             // Draw top line
             spriteBatch.Draw(pixel, new Rectangle(rectangleToDraw.X, rectangleToDraw.Y, rectangleToDraw.Width, thicknessOfBorder), borderColor);

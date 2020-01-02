@@ -7,7 +7,7 @@
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{268A56B2-C0D2-4A57-BB8A-85D0E4320DFE}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Game</RootNamespace>
     <AssemblyName>Game</AssemblyName>
@@ -40,6 +40,9 @@
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -49,16 +52,19 @@
     <Compile Include="src\Components\Component.cs" />
     <Compile Include="src\Components\SpriteComponent.cs" />
     <Compile Include="src\Components\Transform.cs" />
-    <Compile Include="src\Entity.cs" />
     <Compile Include="src\Game1.cs" />
+    <Compile Include="src\Entity.cs" />
+    <Compile Include="src\InputManager.cs" />
     <Compile Include="src\Models\Animation.cs" />
+    <Compile Include="src\Logger.cs" />
+    <Compile Include="src\Models\TextureSheet.cs" />
+    <Compile Include="src\Tiled\TiledReader.cs" />
+    <Compile Include="src\Tiled\TileLayer.cs" />
+    <Compile Include="src\Tiled\Tilemap.cs" />
     <Compile Include="src\Player.cs" />
+    <Compile Include="src\Tiled\Tileset.cs" />
+    <Compile Include="src\Utils\RectangleF.cs" />
     <Compile Include="src\Scene.cs" />
-    <Compile Include="src\Systems\AnimatingSystem.cs" />
-    <Compile Include="src\Systems\BaseSystem.cs" />
-    <Compile Include="src\Systems\RenderingSystem.cs" />
-    <Compile Include="src\TextureAtlas.cs" />
-    <Compile Include="src\Utilities\ComponentFlags.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">
@@ -73,6 +79,9 @@
   <ItemGroup>
     <MonoGameContentReference Include="Content\Content.mgcb" />
     <None Include="app.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src\Pipeline\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />

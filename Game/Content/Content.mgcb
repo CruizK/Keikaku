@@ -10,6 +10,7 @@
 
 #-------------------------------- References --------------------------------#
 
+/reference:..\..\TiledPipelineExtension\bin\Release\TiledPipelineExtension.dll
 
 #---------------------------------- Content ---------------------------------#
 
@@ -25,7 +26,18 @@
 /processorParam:TextureFormat=Color
 /build:adventurer-Sheet.png;sprite_sheet.png
 
-#begin GrasswVines.png
+#begin Naruto Opening 2 Haruka Kanata (HD).mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Naruto Opening 2 Haruka Kanata (HD).mp3;naruto_run.mp3
+
+#begin testMap.tmx
+/importer:TiledImporter
+/processor:TiledProcessor
+/build:testMap.tmx
+
+#begin TileSheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -35,5 +47,5 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:GrasswVines.png;grass.png
+/build:TileSheet.png
 
