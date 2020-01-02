@@ -61,7 +61,7 @@ namespace Keikaku
                 Matrix.CreateTranslation(new Vector3(screenWidth * 0.5f, screenHeight * 0.5f,0));
 
             Vector2 Origin = new Vector2((screenWidth / 2) / zoom, (screenHeight / 2) / zoom);
-            Console.WriteLine("Origin: " + Origin.ToString() + ", Zoom: " + zoom);
+            //Console.WriteLine("Origin: " + Origin.ToString() + ", Zoom: " + zoom);
             
             viewBounds = new Rectangle((int)(position.X - Origin.X), (int)(position.Y - Origin.Y), (int)(Origin.X*2), (int)(Origin.Y*2));
         }

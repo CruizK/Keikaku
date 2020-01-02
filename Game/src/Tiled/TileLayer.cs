@@ -14,7 +14,7 @@ namespace Keikaku.Tiled
         public string Name;
         public int Width;
         public int Height;
-        public int[] Tiles;
+        public Tile[] Tiles;
 
         public TileLayer()
         {

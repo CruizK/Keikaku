@@ -29,7 +29,6 @@ namespace Keikaku
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             scene = new Scene();
-            player = new Player();
             this.IsMouseVisible = true;
             Console.WriteLine(typeof(Tilemap).AssemblyQualifiedName);
         }
@@ -72,7 +71,7 @@ namespace Keikaku
             //for(int i = 0; i < map.)
 
             scene.LoadContent(Content);
-
+            player = new Player(map);
             // TODO: use this.Content to load your game content here
 
             //grassTexture = Content.Load<Texture2D>("grass");

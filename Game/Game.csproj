@@ -58,6 +58,7 @@
     <Compile Include="src\Models\Animation.cs" />
     <Compile Include="src\Logger.cs" />
     <Compile Include="src\Models\TextureSheet.cs" />
+    <Compile Include="src\Tiled\Tile.cs" />
     <Compile Include="src\Tiled\TiledReader.cs" />
     <Compile Include="src\Tiled\TileLayer.cs" />
     <Compile Include="src\Tiled\Tilemap.cs" />

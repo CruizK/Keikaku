@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Keikaku.Components;
-using Keikaku.Utils;
+using Keikaku.Tiled;
 using Keikaku.Models;
 
 using Microsoft.Xna.Framework;
@@ -30,7 +30,7 @@ namespace Keikaku
         Rectangle floorBounds;
         Point colliderDisplacement;
 
-
+        Tilemap map;
 
         Song narutoSong;
 
@@ -49,8 +49,9 @@ namespace Keikaku
 
         PlayerState currentState;
 
-        public Player()
+        public Player(Tilemap map)
         {
+            this.map = map;
             transform = new Transform();
             sprite = new SpriteComponent();
             currentState = PlayerState.STANDING;
@@ -76,7 +77,7 @@ namespace Keikaku
             // COPY RIGHT INFRINGEMENT
             narutoSong = Content.Load<Song>("naruto_run");
             MediaPlayer.Volume = .1f;
-            MediaPlayer.Play(narutoSong);
+            //MediaPlayer.Play(narutoSong);
             
             animation = new AnimationComponent<PlayerState>();
 
@@ -89,17 +90,9 @@ namespace Keikaku
 
             spriteBounds = sheet.getTextureRect(animation.currentAnimation.CurrentFrame);
 
-            terrain = new[] {
-                new Rectangle(-300, 450, 50, 100),
-                new Rectangle(300, 450, 50, 100),
-                new Rectangle(150, 400, 100, 50),
-                new Rectangle(-5000, 500, 10000, 50)
-            };
-            groundTexture = new Texture2D(device, 1, 1);
-            groundTexture.SetData(new[] { Color.Aqua });
-
             colliderDisplacement = new Point(20, 8);
 
+            transform.Position = new Vector2(161, 2835);
 
             effect = SpriteEffects.None;
             transform.Scale = 1.5f;
@@ -310,64 +303,40 @@ namespace Keikaku
         {
             collisionBounds = new Rectangle((int)(transform.Position.X + speed.X * dt), (int)(transform.Position.Y + speed.Y * dt), collisionBounds.Width, collisionBounds.Height);
 
-            bool collidingGround = false;
-            //Console.WriteLine(currentState);
-
-            //Console.WriteLine(transform.Position);
-            foreach (Rectangle rect in terrain)
+            Tile yTile = map.GetTile((int)transform.Position.X, collisionBounds.Bottom);
+            if(yTile != null && yTile.Data != 0)
             {
-                if(collisionBounds.Intersects(rect))
+                Console.WriteLine(yTile.X + "-" + yTile.Y);
+                speed.Y = 0;
+                transform.Position.Y = yTile.Y - collisionBounds.Height;
+                onGround = true;
+            }
+            else
+            {
+                onGround = false;
+                Tile y2Tile = map.GetTile((int)transform.Position.X, collisionBounds.Top);
+                if(y2Tile != null && y2Tile.Data != 0)
                 {
-                    //Console.WriteLine("INTERSECTION");
-                    //Collision below player
-                    if(rect == terrain[2])
-                    {
-                        //Console.WriteLine((int)transform.Position.Y + spriteBounds.Height);
-                        //Console.WriteLine(terrain[0].Y);
-                        //Console.WriteLine(collisionBounds);
-                    }
-
-                    //Console.WriteLine((int)transform.Position.Y + spriteBounds.Height);
-
-
-
-                    if ((int)transform.Position.X >= rect.Right)
-                    {
-                        speed.X = 0;
-                        transform.Position.X = rect.Right;
-                    }
-                    else if((int)transform.Position.X + collisionBounds.Width <= rect.Left)
-                    {
-                        speed.X = 0;
-                        transform.Position.X = rect.Left - collisionBounds.Width;
-                    }
-
-                    else if ((int)transform.Position.Y + spriteBounds.Height <= rect.Y)
-                    {
-                        if (rect == terrain[2])
-                        {
-                            Console.WriteLine((int)transform.Position.Y + spriteBounds.Height);
-                            Console.WriteLine(collisionBounds.Bottom);
-                        }
-
-                        speed.Y = 0;
-                        //Console.WriteLine("COLLISION ABOVE");
-                        transform.Position.Y = rect.Top - collisionBounds.Height+1;
-                        collidingGround = true;
-                    }
-                    else if ((int)transform.Position.Y >= rect.Bottom)
-                    {
-                        speed.Y *= -.15f;
-                        //Console.WriteLine(currentState);
-                        transform.Position.Y = rect.Bottom+1;
-                    }
-                  
+                    speed.Y *= -.15f;
+                    transform.Position.Y = y2Tile.Y + map.TileHeight;
                 }
             }
 
-            onGround = collidingGround;
-            //Console.WriteLine(onGou);
-            //onGround = collidingGround;
+            Tile xTile = map.GetTile(collisionBounds.Left, (int)transform.Position.Y);
+            if (xTile != null && xTile.Data != 0)
+            {
+                speed.X = 0;
+                transform.Position.X = xTile.X + map.TileWidth;
+            }
+            else 
+            {
+                Tile x2Tile = map.GetTile(collisionBounds.Right, (int)transform.Position.Y);
+                if (x2Tile != null && x2Tile.Data != 0)
+                {
+                    speed.X = 0;
+                    transform.Position.X = x2Tile.X - collisionBounds.Width;
+                }
+            }
         }
 
         public void Update(GameTime gameTime)
@@ -377,133 +346,6 @@ namespace Keikaku
             animation.Update(dt);
             spriteBounds = sheet.getTextureRect(animation.currentAnimation.CurrentFrame);
 
-            /*Vector2 velocity = Vector2.Zero;
-            Vector2 newPosition = transform.Position;
-
-            if(InputManager.IsKeyDown(Keys.A))
-            {
-                acceleration.X -= 50;
-                moving = true;
-            }
-            if(InputManager.IsKeyDown(Keys.D))
-            {
-                acceleration.X += 50;
-                moving = true;
-            }
-            if(!InputManager.IsKeyDown(Keys.A) && !InputManager.IsKeyDown(Keys.D))
-            {
-                moving = false;
-            }
-            if (Math.Abs(acceleration.X) > MAX_SPEED)
-                acceleration.X = MAX_SPEED * Math.Sign(acceleration.X);
-            if(onGround && InputManager.IsKeyDown(Keys.Space))
-            {
-                acceleration.Y += -500;
-            }
-            if(InputManager.KeyPressed(Keys.Z))
-            {
-                sprite.Texture.CurrentRectangle++;
-                if (sprite.Texture.CurrentRectangle >= sprite.Texture.Rects.Count)
-                    sprite.Texture.CurrentRectangle = 0;
-            }
-
-            if(!onGround)
-            {
-                acceleration.Y += 10;
-            }
-
-            // Check For Collisions
-
-            velocity.X += acceleration.X * dt;
-            if(acceleration.X != 0 && !moving)
-                acceleration.X *= .85f;
-            velocity.Y += acceleration.Y * dt;
-
-
-            //int x5 = Math.Max(collisionBounds.X)
-
-            //foreach(Rectangle rect in terrain)
-
-            bool meme = false;
-            foreach (Rectangle rect in terrain)
-            {
-                collisionBounds.X = (int)transform.Position.X;
-                collisionBounds.Y = (int)(transform.Position.Y + velocity.Y);
-                floorBounds.X = collisionBounds.X;
-                floorBounds.Y = collisionBounds.Y + 10;
-
-                if (collisionBounds.Intersects(rect))
-                {
-                    // Bottom Collision
-                    if(collisionBounds.Y < rect.Y)
-                    {
-                        //Console.WriteLine("Bottom Collision");
-                        acceleration.Y = 0;
-                        transform.Position.Y = rect.Top - collisionBounds.Height;
-                        //onGround = true;
-                    }
-                    else
-                    {
-                        acceleration.Y = 0;
-                        transform.Position.Y = rect.Bottom;
-                    }
-                    velocity.Y = 0;
-                }
-
-                if(floorBounds.Intersects(rect))
-                {
-                    if (floorBounds.Y < rect.Y)
-                    {
-                        meme = true;
-                    }
-                }
-
-
-
-                collisionBounds.Y = (int)transform.Position.Y;
-                collisionBounds.X = (int)(transform.Position.X + velocity.X);
-
-                if (collisionBounds.Intersects(rect))
-                {
-                    // Left collision
-                    if (transform.Position.X < rect.X)
-                    {
-                        acceleration.X = 0;
-                        transform.Position.X = rect.Left - collisionBounds.Width;
-                    }
-                    else
-                    {
-                        acceleration.X = 0;
-                        transform.Position.X = rect.Right;
-                    }
-                        
-                    velocity.X = 0;
-                }
-            }
-
-            Console.WriteLine(acceleration.ToString() + "-" + velocity.ToString() + "-" + transform.Position.ToString());
-            if (Math.Abs(velocity.X) < 1) velocity.X = 0;
-
-            onGround = meme;
-
-            if(acceleration.Y != 0)
-            {
-                onGround = false;
-            }
-
-            if (velocity.X < 0)
-            {
-                effect = SpriteEffects.FlipHorizontally;
-            }
-            if (velocity.X > 0)
-            {
-                effect = SpriteEffects.None;
-            }
-
-
-            transform.Position += velocity;
-            */
-            //collisionBounds = new Rectangle((int)(transform.Position.X), (int)(transform.Position.Y), collisionBounds.Width, collisionBounds.Height);
         }
 
 
@@ -512,11 +354,6 @@ namespace Keikaku
             spriteBatch.Draw(sprite.Texture, transform.Position, spriteBounds,
                 sprite.Color, transform.Rotation, new Vector2(colliderDisplacement.X, colliderDisplacement.Y), transform.Scale,
                 effect, 0.0f);
-            
-            foreach(Rectangle rec in terrain)
-            {
-                spriteBatch.Draw(groundTexture, rec, Color.White);
-            }
 
             //Game1.DrawBorder(spriteBatch, collisionBounds, 1, Color.Red);
             //Game1.DrawBorder(spriteBatch, floorBounds, 1, Color.Green);

@@ -48,7 +48,7 @@ namespace Keikaku.Tiled
                 layer.Height = input.ReadInt32();
                 layer.Name = input.ReadString();
 
-                layer.Tiles = new int[layer.Width * layer.Height];
+                layer.Tiles = new Tile[layer.Width * layer.Height];
 
                 int pairCount = input.ReadInt32();
 
@@ -60,7 +60,10 @@ namespace Keikaku.Tiled
                     int id = input.ReadInt32();
                     for(int k = 0; k < count; k++)
                     {
-                        layer.Tiles[tileIndex] = id;
+                        int y = tileIndex / layer.Width;
+                        int x = (tileIndex - (layer.Width * y));
+
+                        layer.Tiles[tileIndex] = new Tile(x * tilemap.TileWidth, y * tilemap.TileHeight, id);
                         tileIndex++;
                     }
                 }

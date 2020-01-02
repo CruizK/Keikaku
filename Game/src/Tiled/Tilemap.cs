@@ -36,10 +36,13 @@ namespace Keikaku.Tiled
             return null;
         }
 
-        public int GetTile(int x, int y)
+        public Tile GetTile(int x, int y)
         {
             int tileX = -1;
             int tileY = -1;
+
+            if (x < 0 || x > Width * TileWidth || y < 0 || y > Height * TileHeight)
+                return null;
 
             if (x == 0)
                 tileX = 0;
@@ -54,7 +57,7 @@ namespace Keikaku.Tiled
             return tileLayers.First().Tiles[tileY * Height + tileX];
         }
 
-        public int GetTile(Point pos)
+        public Tile GetTile(Point pos)
         {
             return GetTile(pos.X, pos.Y);
         }
@@ -66,16 +69,13 @@ namespace Keikaku.Tiled
                 for(int i = 0; i < layer.Tiles.Length; i++)
                 {
                     // If tile is not a blank sprite, then draw it
-                    if(layer.Tiles[i] != 0)
+                    if(layer.Tiles[i].Data != 0)
                     {
-                        int tileData = layer.Tiles[i];
+                        Tile tile = layer.Tiles[i];
+                        int tileData = tile.Data;
                         Tileset tileset = GetTileset(tileData);
-                        int f = Width * i / Width;
-                        int x = (i - (Width * (i / Width)))  * TileWidth;
-                        
-                        int y = i / Width * TileHeight;
 
-                        spriteBatch.Draw(tileset.Texture, new Rectangle(x, y, TileWidth, TileHeight), tileset.GetTile(tileData), Color.White);
+                        spriteBatch.Draw(tileset.Texture, new Rectangle(tile.X, tile.Y, TileWidth, TileHeight), tileset.GetTile(tileData), Color.White);
                     }
                 }
             }
