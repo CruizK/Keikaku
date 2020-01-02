@@ -26,7 +26,7 @@ namespace Keikaku
             this.screenWidth = screenWidth;
             this.screenHeight = screenHeight;
 
-            zoom = 1.5f;
+            zoom = 1.0f;
             rotation = 0.0f;
             position = new Vector2(0, 0);
         }
