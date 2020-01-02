@@ -36,6 +36,29 @@ namespace Keikaku.Tiled
             return null;
         }
 
+        public int GetTile(int x, int y)
+        {
+            int tileX = -1;
+            int tileY = -1;
+
+            if (x == 0)
+                tileX = 0;
+            if (y == 0)
+                tileY = 0;
+
+            if (tileX == -1)
+                tileX = x / TileWidth;
+            if (tileY == -1)
+                tileY = y / TileHeight;
+
+            return tileLayers.First().Tiles[tileY * Height + tileX];
+        }
+
+        public int GetTile(Point pos)
+        {
+            return GetTile(pos.X, pos.Y);
+        }
+
         public void DrawLayers(SpriteBatch spriteBatch)
         {
             foreach(TileLayer layer in tileLayers)

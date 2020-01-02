@@ -20,6 +20,7 @@ namespace Keikaku
         private float screenWidth;
         private float screenHeight;
 
+        public Rectangle viewBounds;
 
         public Camera(int screenWidth, int screenHeight)
         {
@@ -34,6 +35,11 @@ namespace Keikaku
         public void setCameraPosition(Vector2 newPosition)
         {
             position = newPosition;
+        }
+
+        public Vector2 ScreenToWorldCoord(Vector2 screenCoords)
+        {
+            return Vector2.Transform(screenCoords, Matrix.Invert(transformMatrix));
         }
 
         public void moveCamera(Vector2 movePosition)
@@ -53,7 +59,16 @@ namespace Keikaku
                 Matrix.CreateScale(zoom) *
                 Matrix.CreateRotationZ(rotation) *
                 Matrix.CreateTranslation(new Vector3(screenWidth * 0.5f, screenHeight * 0.5f,0));
+
+            Vector2 Origin = new Vector2((screenWidth / 2) / zoom, (screenHeight / 2) / zoom);
+            Console.WriteLine("Origin: " + Origin.ToString() + ", Zoom: " + zoom);
             
+            viewBounds = new Rectangle((int)(position.X - Origin.X), (int)(position.Y - Origin.Y), (int)(Origin.X*2), (int)(Origin.Y*2));
+        }
+
+        public bool IsInView(Rectangle rect)
+        {
+            return viewBounds.Intersects(rect);
         }
 
     }

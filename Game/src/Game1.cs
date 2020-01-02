@@ -21,6 +21,8 @@ namespace Keikaku
         static Texture2D pixel;
         Player player;
 
+        Vector2 mouseCoords;
+
         Scene scene;
         public Game1()
         {
@@ -103,15 +105,28 @@ namespace Keikaku
 
             //cam.zoomCamera(cameraZoom);
             InputManager.UpdateInput();
-            cam.Update(gameTime);
-            cam.setCameraPosition(new Vector2((int)player.GetOrigin().X, (int)player.GetOrigin().Y));
 
-            if (InputManager.IsKeyDown(Keys.E))
-                cam.zoomCamera(0.1f);
-            else if (InputManager.IsKeyDown(Keys.Q))
-                cam.zoomCamera(-0.1f);
 
-            player.Update(gameTime);
+            if (this.IsActive)
+            {
+                cam.Update(gameTime);
+                cam.setCameraPosition(new Vector2((int)player.GetOrigin().X, (int)player.GetOrigin().Y));
+
+                mouseCoords = InputManager.GetMousePos().ToVector2();
+
+                //mouseCoords = cam.ScreenToWorldCoord(InputManager.GetMousePos().ToVector2());
+
+                //Console.WriteLine(mouseCoords);
+
+                if (InputManager.IsKeyDown(Keys.E))
+                    cam.zoomCamera(0.1f);
+                else if (InputManager.IsKeyDown(Keys.Q))
+                    cam.zoomCamera(-0.1f);
+
+                player.Update(gameTime);
+            }
+
+
 
             base.Update(gameTime);
         }
@@ -126,6 +141,7 @@ namespace Keikaku
             
             spriteBatch.Begin(SpriteSortMode.Texture, null, SamplerState.PointClamp, null, null, null, cam.transformMatrix);
             map.DrawLayers(spriteBatch);
+            Game1.DrawBorder(spriteBatch, cam.viewBounds, 10, Color.Red);
             //scene.Draw(spriteBatch);
             player.Draw(spriteBatch);
             spriteBatch.End();
