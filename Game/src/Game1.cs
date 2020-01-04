@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Keikaku.Tiled;
+using Keikaku.Character;
 
 namespace Keikaku
 {
@@ -122,7 +123,7 @@ namespace Keikaku
                 else if (InputManager.IsKeyDown(Keys.Q))
                     cam.zoomCamera(-0.1f);
 
-                player.Update(gameTime);
+                player.Update(gameTime, ref player);
             }
 
 
@@ -140,7 +141,7 @@ namespace Keikaku
             
             spriteBatch.Begin(SpriteSortMode.Texture, null, SamplerState.PointClamp, null, null, null, cam.transformMatrix);
             map.DrawLayers(spriteBatch);
-            Game1.DrawBorder(spriteBatch, cam.viewBounds, 10, Color.Red);
+            //Game1.DrawBorder(spriteBatch, cam.viewBounds, 10, Color.Red);
             //scene.Draw(spriteBatch);
             player.Draw(spriteBatch);
             spriteBatch.End();

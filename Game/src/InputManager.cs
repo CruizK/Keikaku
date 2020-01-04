@@ -50,5 +50,10 @@ namespace Keikaku
         {
             return currentState.IsKeyUp(key) && previousState.IsKeyDown(key);
         }
+
+        public static bool KeyReleased(Keys key)
+        {
+            return previousState.IsKeyDown(key) && currentState.IsKeyUp(key);
+        }
     }
 }

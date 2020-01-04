@@ -54,7 +54,34 @@ namespace Keikaku.Tiled
             if (tileY == -1)
                 tileY = y / TileHeight;
 
-            return tileLayers.First().Tiles[tileY * Height + tileX];
+            Tile tile = tileLayers.First().Tiles[tileY * Height + tileX];
+
+            return tile.Data != 0 ? tile : null;
+        }
+
+        // Checks all four corners of the rect for a tile intersection and returns
+        // The first tile with data type not zero, probably should return a collection of tiles
+        public Tile GetTile(Rectangle rect)
+        {
+
+            Tile tile = GetTile(rect.X, rect.Y);
+            if (tile != null && tile.Data != 0)
+                return tile;
+
+            tile = GetTile(rect.X, rect.Bottom);
+            if (tile != null && tile.Data != 0)
+                return tile;
+
+
+            tile = GetTile(rect.Right, rect.Y);
+            if (tile != null && tile.Data != 0)
+                return tile;
+
+            tile = GetTile(rect.Right, rect.Bottom);
+            if (tile != null && tile.Data != 0)
+                return tile;
+
+            return null;
         }
 
         public Tile GetTile(Point pos)

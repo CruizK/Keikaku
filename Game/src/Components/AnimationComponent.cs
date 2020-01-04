@@ -50,7 +50,7 @@ namespace Keikaku.Components
 
         public void SetAnimation(T key)
         {
-            if(currentAnimation != null)
+            if(currentAnimation != null && currentAnimation != Animations[key])
             {
                 currentAnimation.CurrentFrame = currentAnimation.StartFrame;
                 timeElapsed = 0;
