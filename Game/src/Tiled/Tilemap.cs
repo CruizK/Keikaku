@@ -102,10 +102,34 @@ namespace Keikaku.Tiled
                         int tileData = tile.Data;
                         Tileset tileset = GetTileset(tileData);
 
-                        spriteBatch.Draw(tileset.Texture, new Rectangle(tile.X, tile.Y, TileWidth, TileHeight), tileset.GetTile(tileData), Color.White);
+                        spriteBatch.Draw(tileset.Texture, new Rectangle(tile.X, tile.Y, TileWidth, TileHeight), tileset.GetTile(tileData), tile.color);
                     }
                 }
             }
+        }
+
+        public Tile RaycastTile(Ray2D ray)
+        {
+            Tile tile = null;
+            Point pos = ray.Position.ToPoint();
+            tile = GetTile(pos);
+            int i = 0;
+            while (tile == null)
+            {
+                i++;
+                pos += new Point((int)(TileWidth * ray.Direction.X), (int)(TileHeight * ray.Direction.Y));
+                tile = GetTile(pos);
+                /*
+                if (tile != null)
+                    break;
+
+                pos += new Point(0, (int)(TileHeight * ray.Direction.Y));
+                */
+                if (i > 100)
+                    return null;
+            }
+
+            return tile;
         }
 
         public void AddTileset(Tileset tileset)

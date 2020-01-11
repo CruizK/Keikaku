@@ -13,11 +13,10 @@ namespace Keikaku.Character
 
         public override void Update(ref Player player)
         {
-            player.acceleration = 25;
+            player.acceleration = 29;
 
             if(player.collidingX && InputManager.IsKeyDown(Keys.A) != InputManager.IsKeyDown(Keys.D))
             {
-                Console.WriteLine("Pushed");
                 if (player.speed.Y < 0)
                     player.speed.Y = 0;
                 else

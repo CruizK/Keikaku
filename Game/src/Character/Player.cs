@@ -58,6 +58,11 @@ namespace Keikaku.Character
             return new Vector2(transform.Position.X + spriteBounds.Width/2-10, transform.Position.Y + spriteBounds.Height/2);
         }
 
+        public Rectangle GetCollisionBounds()
+        {
+            return collisionBounds;
+        }
+
         const int MAX_JUMP = 500;
 
         public void LoadContent(ContentManager Content, GraphicsDevice device)
@@ -69,7 +74,7 @@ namespace Keikaku.Character
             // COPY RIGHT INFRINGEMENT
             narutoSong = Content.Load<Song>("naruto_run");
             MediaPlayer.Volume = 20f/100f;
-            MediaPlayer.Play(narutoSong);
+            //MediaPlayer.Play(narutoSong);
             MediaPlayer.IsRepeating = true;
 
             stateStack.Push(IPlayerState.OnGroundState);
@@ -191,7 +196,6 @@ namespace Keikaku.Character
                     collidingRight = true;
                     transform.Position.X = xTile.X - collisionBounds.Width;
                 }
-                Console.WriteLine(xTile.X + map.TileWidth + "-" + collisionBounds.Left);
             }
             else
             {

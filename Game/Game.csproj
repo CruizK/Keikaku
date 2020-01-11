@@ -64,12 +64,17 @@
     <Compile Include="src\Logger.cs" />
     <Compile Include="src\Models\TextureSheet.cs" />
     <Compile Include="src\Character\IPlayerState.cs" />
+    <Compile Include="src\Ray2D.cs" />
     <Compile Include="src\Tiled\Tile.cs" />
     <Compile Include="src\Tiled\TiledReader.cs" />
     <Compile Include="src\Tiled\TileLayer.cs" />
     <Compile Include="src\Tiled\Tilemap.cs" />
     <Compile Include="src\Character\Player.cs" />
     <Compile Include="src\Tiled\Tileset.cs" />
+    <Compile Include="src\UI\Label.cs" />
+    <Compile Include="src\UI\Panel.cs" />
+    <Compile Include="src\UI\UIElement.cs" />
+    <Compile Include="src\UI\VerticalContainer.cs" />
     <Compile Include="src\Utils\RectangleF.cs" />
     <Compile Include="src\Scene.cs" />
   </ItemGroup>

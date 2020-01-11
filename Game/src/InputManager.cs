@@ -13,22 +13,49 @@ namespace Keikaku
     {
 
         static Point mousePos;
+        static Point mouseDelta;
 
         static KeyboardState currentState;
         static KeyboardState previousState;
 
+        static MouseState mouseState;
+        static MouseState prevMouseState;
+
         public static void UpdateInput()
         {
             previousState = currentState;
+            prevMouseState = mouseState;
 
-            mousePos = Mouse.GetState().Position;
-            
+            mouseState = Mouse.GetState();
             currentState = Keyboard.GetState();
+
+            mousePos = mouseState.Position;
+            mouseDelta = mouseState.Position - prevMouseState.Position;
+        }
+
+        public static bool IsMouseMoving()
+        {
+            return prevMouseState.Position != mouseState.Position;
         }
 
         public static Point GetMousePos()
         {
             return mousePos;
+        }
+
+        public static Point GetMouseDelta()
+        {
+            return mouseDelta;
+        }
+
+        public static bool IsLeftDown()
+        {
+            return mouseState.LeftButton == ButtonState.Pressed;
+        }
+
+        public static bool IsClicked()
+        {
+            return prevMouseState.LeftButton == ButtonState.Pressed && mouseState.LeftButton == ButtonState.Released;
         }
 
 

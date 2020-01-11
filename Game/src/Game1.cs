@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Keikaku.Tiled;
 using Keikaku.Character;
+using Keikaku.UI;
 
 namespace Keikaku
 {
@@ -16,22 +17,27 @@ namespace Keikaku
         SpriteBatch spriteBatch;
 
         Camera cam;
-        int cameraSpeed = 5;
-        float cameraZoom = 0.5f;
 
-        static Texture2D pixel;
+        public static Texture2D pixel;
         Player player;
 
         Vector2 mouseCoords;
 
         Scene scene;
+
+        Tilemap map;
+        SpriteFont font;
+        Panel panel;
+        Label label2;
+        RasterizerState UIRasterize;
+        VerticalContainer verti;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             scene = new Scene();
             this.IsMouseVisible = true;
-            Console.WriteLine(typeof(Tilemap).AssemblyQualifiedName);
         }
 
         /// <summary>
@@ -40,11 +46,22 @@ namespace Keikaku
         /// related content.  Calling base.Initialize will enumerate through any components
         /// and initialize them as well.
         /// </summary>
+        /// 
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            
-            base.Initialize();
+
+            verti = new VerticalContainer();
+
+            panel = new Panel();
+            panel.Size = new Vector2(300, 150);
+            panel.PanelColor = new Color(0, 0, 0, 0.5f);
+            panel.TitleColor = new Color(0, 0, 0.7f, 0.5f);
+            panel.Title = "Test Panel";
+            panel.Name = "Panel 1";
+
+            panel.AddChild(verti);
+
 
             int width = graphics.GraphicsDevice.Viewport.Width;
             int height = graphics.GraphicsDevice.Viewport.Height;
@@ -53,8 +70,9 @@ namespace Keikaku
             pixel = new Texture2D(GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
             pixel.SetData(new[] { Color.White });
 
+            panel.Init();
 
-
+            base.Initialize();
         }
 
         /// <summary>
@@ -62,22 +80,31 @@ namespace Keikaku
         /// all of your content.
         /// </summary>
         ///
-        Tilemap map;
+
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             map = Content.Load<Tilemap>("testMap");
+            font = Content.Load<SpriteFont>("font");
+
+            //panel.SetPosition(new Vector2(100, 100));
+
             //for(int i = 0; i < map.)
 
             scene.LoadContent(Content);
             player = new Player(map);
             // TODO: use this.Content to load your game content here
 
-            //grassTexture = Content.Load<Texture2D>("grass");
-
+            //grassTexture = Content.Load<Texture2D>("grass")
             player.LoadContent(Content, GraphicsDevice);
+
+            panel.LoadContent(Content);
+
+            UIRasterize = new RasterizerState();
+            UIRasterize.ScissorTestEnable = true;
+
         }
 
         /// <summary>
@@ -114,7 +141,9 @@ namespace Keikaku
 
                 mouseCoords = InputManager.GetMousePos().ToVector2();
 
-                //mouseCoords = cam.ScreenToWorldCoord(InputManager.GetMousePos().ToVector2());
+                
+
+                mouseCoords = cam.ScreenToWorldCoord(InputManager.GetMousePos().ToVector2());
 
                 //Console.WriteLine(mouseCoords);
 
@@ -126,7 +155,7 @@ namespace Keikaku
                 player.Update(gameTime, ref player);
             }
 
-
+            panel.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -135,15 +164,45 @@ namespace Keikaku
         /// This is called when the game should draw itself.
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
+
+
+   
+
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Black);
-            
+            GraphicsDevice.Clear(Color.Gray);
+           
             spriteBatch.Begin(SpriteSortMode.Texture, null, SamplerState.PointClamp, null, null, null, cam.transformMatrix);
+            Ray2D ray = new Ray2D(player.GetCollisionBounds().Center.ToVector2(), Vector2.Normalize(mouseCoords- player.GetCollisionBounds().Center.ToVector2()));
+            //Ray2D ray = new Ray2D(player.GetOrigin(), Vector2.One);
+            Tile tile = map.RaycastTile(ray);
+            //Console.WriteLine(ray.Direction);
+            if (tile != null)
+            {
+                DrawLine(spriteBatch, ray.Position, new Vector2(tile.X, tile.Y), Color.Red);
+                tile.color = Color.Red;
+            }
+                
+
             map.DrawLayers(spriteBatch);
+
+            if (tile != null)
+            {
+
+                tile.color = Color.White;
+            }
+
+            //tile.color = Color.White;
+
             //Game1.DrawBorder(spriteBatch, cam.viewBounds, 10, Color.Red);
             //scene.Draw(spriteBatch);
             player.Draw(spriteBatch);
+            spriteBatch.End();
+
+
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, UIRasterize);
+            //label.Draw(spriteBatch);
+            panel.Draw(spriteBatch);
             spriteBatch.End();
 
             base.Draw(gameTime);
@@ -167,6 +226,28 @@ namespace Keikaku
                                             rectangleToDraw.Y + rectangleToDraw.Height - thicknessOfBorder,
                                             rectangleToDraw.Width,
                                             thicknessOfBorder), borderColor);
+        }
+
+        public static void DrawRay(SpriteBatch spriteBatch, Ray2D ray, Color color)
+        {
+            //float rot = Math.Atan2(ray.Position)
+            Vector2 endPos = ray.Position + ray.Direction * 5000;
+            DrawLine(spriteBatch, ray.Position, endPos, color);
+            
+
+            //Console.WriteLine(MathHelper.ToDegrees(rot));
+        }
+
+        public static void DrawLine(SpriteBatch spriteBatch, Vector2 startPos, Vector2 endPos, Color color)
+        {
+            //Console.WriteLine(startPos + "-" + endPos);
+            float rot = (float)Math.Atan2(endPos.Y - startPos.Y, endPos.X - startPos.X);
+            // arctan endpos.x-startpos.x, endpos.y-startpos.y??
+            Vector2 width = endPos - startPos;
+            spriteBatch.Draw(pixel, new Rectangle((int)startPos.X, (int)startPos.Y, (int)width.Length(), 1), 
+                null, color, rot, Vector2.Zero, SpriteEffects.None, 0f);
+
+            //Console.WriteLine(MathHelper.ToDegrees(rot));
         }
     }
 }
