@@ -28,7 +28,7 @@ namespace Keikaku.UI
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.DrawString(font, Text, GetLocalPos(), FontColor);
+            spriteBatch.DrawString(font, Text, GetWorldCoords(), FontColor);
 
             base.Draw(spriteBatch);
         }

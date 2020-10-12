@@ -73,6 +73,7 @@
     <Compile Include="src\Tiled\Tileset.cs" />
     <Compile Include="src\UI\Label.cs" />
     <Compile Include="src\UI\Panel.cs" />
+    <Compile Include="src\UI\ScrollingContainer.cs" />
     <Compile Include="src\UI\UIElement.cs" />
     <Compile Include="src\UI\VerticalContainer.cs" />
     <Compile Include="src\Utils\RectangleF.cs" />

@@ -14,9 +14,9 @@ namespace Keikaku.UI
 
         public string Name;
 
-        public Vector2 Position { get; private set; }
-        public Vector2 Scale { get; private set; }
-        public float Rotation { get; private set; }
+        public Vector2 Position;
+        public Vector2 Scale;
+        public float Rotation;
 
         public Vector2 Size = Vector2.Zero;
 
@@ -41,43 +41,29 @@ namespace Keikaku.UI
             Size = size;
         }
 
-        public virtual void SetPosition(Vector2 position)
+        public void SetPosition(float x, float y)
         {
-            Position = position;
-            Transform = CreateTransform();
-            PercalateTransform();
+            Position = new Vector2(x, y);
         }
 
-        public void SetScale(Vector2 scale)
-        {
-            Scale = scale;
-            PercalateTransform();
-        }
 
-        public void SetRotation(float rotation)
+        protected Vector2 GetWorldCoords()
         {
-            Rotation = rotation;
-            PercalateTransform();
-        }
-
-        private void PercalateTransform()
-        {
-            
-            foreach(UIElement child in Children)
+            Matrix transform = CreateTransform();
+            UIElement parent = Parent;
+            while(parent != null)
             {
-                Console.WriteLine("Percalating From {0}, To {1}", Name, child.Name);
-                child.ApplyTransform(Transform);
+                transform *= parent.CreateTransform();
+                parent = parent.Parent;
             }
-        }
 
-        protected Vector2 GetLocalPos()
-        {
-            return new Vector2(Transform.Translation.X, Transform.Translation.Y);
+            return new Vector2(transform.Translation.X, transform.Translation.Y);
         }
 
         public void AddChild(UIElement child)
         {
             child.Parent = this;
+            Transform = CreateTransform();
             Children.Add(child);
         }
 
@@ -88,20 +74,12 @@ namespace Keikaku.UI
                 Matrix.CreateRotationZ(Rotation);
         }
 
-        public void ApplyTransform(Matrix transform)
-        {
-            Transform = CreateTransform() * transform;
-            PercalateTransform();
-        }
-
         public virtual void Init()
         {
             foreach (UIElement child in Children)
             {
                 child.Init();
             }
-
-            PercalateTransform();
         }
 
         public virtual void LoadContent(ContentManager content)

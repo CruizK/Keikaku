@@ -28,7 +28,6 @@ namespace Keikaku
         Tilemap map;
         SpriteFont font;
         Panel panel;
-        Label label2;
         RasterizerState UIRasterize;
         VerticalContainer verti;
 
@@ -47,11 +46,50 @@ namespace Keikaku
         /// and initialize them as well.
         /// </summary>
         /// 
+
+        Label label;
+        Label l2;
+        Label l3;
+
+        ScrollingContainer scroller;
+
+        const string labelText = "Some Text";
+        const string labelFont = "font";
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
 
+            scroller = new ScrollingContainer();
             verti = new VerticalContainer();
+            label = new Label();
+            l2 = new Label();
+            l3 = new Label();
+
+            verti.Name = "Vertical Container";
+
+            label.Text = labelText;
+            label.FontPath = labelFont;
+            label.Name = "Label1";
+
+            l2.Text = labelText;
+            l2.FontPath = labelFont;
+            l2.Name = "Label2";
+
+            l3.Text = labelText;
+            l3.FontPath = labelFont;
+
+
+
+            verti.SetPosition(0, 25);
+            verti.AddChild(label);
+            verti.AddChild(l2);
+            
+
+            //verti.SetPosition(new Vector2(0, 25));
+
+            //scroller.AddChild(verti);
+            scroller.SetPosition(0,0);
+            scroller.Size = new Vector2(300, 100);
 
             panel = new Panel();
             panel.Size = new Vector2(300, 150);
@@ -62,6 +100,7 @@ namespace Keikaku
 
             panel.AddChild(verti);
 
+            panel.SetPosition(100,100);
 
             int width = graphics.GraphicsDevice.Viewport.Width;
             int height = graphics.GraphicsDevice.Viewport.Height;

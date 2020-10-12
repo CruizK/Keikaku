@@ -61,7 +61,7 @@ namespace Keikaku.UI
             {
                 Vector2 delta = InputManager.GetMouseDelta().ToVector2();
                 if(delta != Vector2.Zero)
-                    SetPosition(Position + delta);
+                    Position += delta;
             }
 
             base.Update(gameTime);
@@ -76,10 +76,10 @@ namespace Keikaku.UI
             //spriteBatch.GraphicsDevice.ScissorRectangle = new Rectangle(GetLocalPos().ToPoint(), Size.ToPoint());
 
             // Draw Entire Panel
-            spriteBatch.Draw(Game1.pixel, new Rectangle(GetLocalPos().ToPoint(), Size.ToPoint()), PanelColor);
+            spriteBatch.Draw(Game1.pixel, new Rectangle(GetWorldCoords().ToPoint(), Size.ToPoint()), PanelColor);
 
             // Draw The Title
-            spriteBatch.Draw(Game1.pixel, new Rectangle(GetLocalPos().ToPoint(), new Point((int)Size.X, 20)), TitleColor);
+            spriteBatch.Draw(Game1.pixel, new Rectangle(GetWorldCoords().ToPoint(), new Point((int)Size.X, 20)), TitleColor);
 
             base.Draw(spriteBatch);
         }
